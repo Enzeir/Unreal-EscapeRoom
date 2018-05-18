@@ -1,11 +1,11 @@
 #########################
 ##  Unreal Escape Room ##
 #########################
-*/Build
-*/Binaries
-*/DerivedDataCache
-*/Intermediate
-*/Saved
+*/Build/
+*/Binaries/
+*/DerivedDataCache/
+*/Intermediate/
+*/Saved/
 EscapeRoom/Content/StarterContent/
 
 *.VC.db
