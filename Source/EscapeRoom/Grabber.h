@@ -32,13 +32,22 @@ private:
 	UInputComponent* InputComponent = nullptr;
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 
+	//method to grab the item
 	void Grab();
-
+	//method to release the item that was grabbed
 	void Release();
 
+	//methods to get the components from the owner
 	void FindPhysicHandleComponent();
 	void FindInputComponent();
 
+	//method to detect the object within grabing reach of the player
 	FHitResult GetFirstPhysicsBodyInReach() const;
+
+	//Return the position of the player
+	FVector GetReachTraceStart() const;
+
+	//returns the end of the reach of the grabber
+	FVector GetReachTraceEnd() const;
 
 };
