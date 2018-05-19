@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+//Used to grab some items on the scene
 #pragma once
 
 #include "CoreMinimal.h"
@@ -33,5 +33,12 @@ private:
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 
 	void Grab();
+
+	void Release();
+
+	void FindPhysicHandleComponent();
+	void FindInputComponent();
+
+	FHitResult GetFirstPhysicsBodyInReach() const;
 
 };

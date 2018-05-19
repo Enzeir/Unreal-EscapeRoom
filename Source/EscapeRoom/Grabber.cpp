@@ -23,17 +23,34 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty!"));
+	FindPhysicHandleComponent();
+	FindInputComponent();
 
-	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
-	if (InputComponent)
-	{
-		InputComponent->BindAction("grab", IE_Pressed, this, &UGrabber::Grab);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s missing input component!"), *GetOwner()->GetName());
-	}
+
+}
+
+// Called every frame
+void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+}
+
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("grabber has grabbed"));
+
+	GetFirstPhysicsBodyInReach();
+
+}
+
+void UGrabber::Release()
+{
+	UE_LOG(LogTemp, Warning, TEXT("grabber has released"));
+}
+
+void UGrabber::FindPhysicHandleComponent()
+{
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (PhysicsHandle)
 	{
@@ -43,41 +60,30 @@ void UGrabber::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s missing physics handle component!"), *GetOwner()->GetName());
 	}
-
 }
 
-void UGrabber::Grab()
+void UGrabber::FindInputComponent()
 {
-
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent)
+	{
+		InputComponent->BindAction("grab", IE_Pressed, this, &UGrabber::Grab);
+		InputComponent->BindAction("grab", IE_Released, this, &UGrabber::Release);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s missing input component!"), *GetOwner()->GetName());
+	}
 }
 
-
-
-// Called every frame
-void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	FVector playerPosition;
 	FRotator playerRotation;
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT playerPosition, OUT playerRotation);
 
-
-	//UE_LOG(LogTemp, Warning, TEXT("Grabber is pointing at %s"), *playerRotation.ToString());
-
 	FVector lineTraceEnd = playerPosition + (playerRotation.Vector() * reach);
-
-	DrawDebugLine(
-		GetWorld(),
-		playerPosition,
-		lineTraceEnd,
-		FColor(255, 0, 0),
-		false,
-		0.0f,
-		0.0f,
-		5.0f
-	);
 
 	FCollisionQueryParams traceParameters(FName(TEXT("")), false, GetOwner());
 
@@ -93,6 +99,8 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (actorHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Grabber is pointing at %s"), *(actorHit->GetName()) );
+		UE_LOG(LogTemp, Warning, TEXT("Grabber is pointing at %s"), *(actorHit->GetName()));
 	}
+
+	return hit;
 }
