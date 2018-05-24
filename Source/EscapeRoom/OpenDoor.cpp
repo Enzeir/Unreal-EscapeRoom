@@ -28,11 +28,6 @@ void UOpenDoor::BeginPlay()
 	}
 }
 
-void UOpenDoor::OpenDoor()
-{
-	owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-}
-
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -44,20 +39,11 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	//if the mass of the objects in the volume is greater than an amount then the door opens
 	if (GetMassOfActorOnPlate() > MassToOpen) 
 	{
-		OpenDoor();
-		lastDoorOpenTime = GetWorld()->GetTimeSeconds();
-	}
-	
-	if ((GetWorld()->GetTimeSeconds() - lastDoorOpenTime) >= doorCloseDelay )
+		OnOpen.Broadcast();
+	}else
 	{
-		CloseDoor();
+		Onclose.Broadcast();
 	}
-}
-
-void UOpenDoor::CloseDoor()
-{
-
-	owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
 }
 
 
