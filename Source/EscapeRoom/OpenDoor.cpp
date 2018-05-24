@@ -22,11 +22,14 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	owner = GetOwner();
+	if (!PressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s is missing a Trigger Volume!"), *GetOwner()->GetName());
+	}
 }
 
 void UOpenDoor::OpenDoor()
 {
-
 	owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
 }
 
@@ -39,7 +42,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	//Poll the trigger Volume
 	//if the mass of the objects in the volume is greater than an amount then the door opens
-	if (GetMassOfActorOnPlate() > 20.f) //TODO: change the magic the number into a parameter
+	if (GetMassOfActorOnPlate() > MassToOpen) 
 	{
 		OpenDoor();
 		lastDoorOpenTime = GetWorld()->GetTimeSeconds();
@@ -63,6 +66,7 @@ float UOpenDoor::GetMassOfActorOnPlate()
 	float TotalMass = 0.f;
 
 	//find the overlapping actors
+	if (!PressurePlate) { return TotalMass; }
 	TArray<AActor*> OverlappingActors;
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
 

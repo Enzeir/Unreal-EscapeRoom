@@ -42,7 +42,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	FVector lineTraceEnd = playerPosition + (playerRotation.Vector() * reach);
 
-
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
 		PhysicsHandle->SetTargetLocation(GetReachTraceEnd());
@@ -56,6 +56,7 @@ void UGrabber::Grab()
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 	AActor* ActorHit = HitResult.GetActor();
 
+	if (!PhysicsHandle) { return; }
 	if (ActorHit != nullptr)
 	{
 		PhysicsHandle->GrabComponent(
@@ -70,6 +71,7 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) { return; }
 	PhysicsHandle->ReleaseComponent();
 }
 
@@ -115,7 +117,6 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 
 	return hit;
 }
-
 
 FVector UGrabber::GetReachTraceStart() const
 {
